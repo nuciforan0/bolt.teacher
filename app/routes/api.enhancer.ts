@@ -70,14 +70,28 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
   // Debug logging to help diagnose API key issues
   logger.info('Enhancer request:', {
     provider: providerName,
+    providerNameType: typeof providerName,
     model,
     hasApiKeysFromCookie: !!apiKeys?.[providerName],
     hasCloudflareEnv: !!cloudflareEnv,
     cloudflareEnvKeys: Object.keys(cloudflareEnv || {}),
     anthropicKeyInEnv: !!cloudflareEnv?.ANTHROPIC_API_KEY,
+    apiKeyFromCookie: apiKeys?.[providerName] ? 'Present' : 'Missing',
+    apiKeyFromEnv: cloudflareEnv?.[`${providerName.toUpperCase()}_API_KEY`] ? 'Present' : 'Missing',
+    cookieApiKeys: Object.keys(apiKeys || {}),
+    providerObject: provider,
   });
 
   try {
+    logger.info('About to call streamText with:', {
+      provider: providerName,
+      model,
+      hasApiKeys: !!apiKeys,
+      apiKeysCount: Object.keys(apiKeys || {}).length,
+      hasProviderSettings: !!providerSettings,
+      hasCloudflareEnv: !!cloudflareEnv,
+    });
+
     const result = await streamText({
       messages: [
         {
