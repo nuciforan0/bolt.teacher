@@ -38,6 +38,13 @@ export function usePromptEnhancer() {
       body: JSON.stringify(requestBody),
     });
 
+    logger.info('Enhancer response:', {
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries()),
+      hasBody: !!response.body,
+    });
+
     const reader = response.body?.getReader();
 
     const originalInput = input;
@@ -55,17 +62,24 @@ export function usePromptEnhancer() {
           const { value, done } = await reader.read();
 
           if (done) {
+            logger.info('Stream done, final input:', _input);
             break;
           }
 
-          _input += decoder.decode(value);
+          const chunk = decoder.decode(value);
+          _input += chunk;
 
-          logger.trace('Set input', _input);
+          logger.info('Received chunk:', {
+            chunkLength: chunk.length,
+            chunk: chunk.substring(0, 100),
+            totalLength: _input.length,
+          });
 
           setInput(_input);
         }
       } catch (error) {
         _error = error;
+        logger.error('Error reading stream:', error);
         setInput(originalInput);
       } finally {
         if (_error) {
@@ -79,6 +93,10 @@ export function usePromptEnhancer() {
           setInput(_input);
         });
       }
+    } else {
+      logger.error('No reader available from response');
+      setEnhancingPrompt(false);
+      setPromptEnhanced(true);
     }
   };
 

@@ -154,6 +154,13 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
       fullStreamType: typeof result.fullStream,
     });
 
+    // Debug: Let's check if the stream is actually readable
+    if (result.textStream) {
+      logger.info('TextStream is available, checking if it can be read');
+    } else {
+      logger.error('TextStream is not available!');
+    }
+
     // Handle streaming errors in a non-blocking way
     (async () => {
       try {
@@ -163,14 +170,43 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
             logger.error('Streaming error:', error);
             break;
           }
+          // Log successful parts to see if we're getting content
+          if (part.type === 'text-delta') {
+            logger.info('Received text delta:', part.textDelta);
+          }
         }
       } catch (error) {
         logger.error('Error processing stream:', error);
       }
     })();
 
-    // Return the text stream directly since it's already text data
-    return new Response(result.textStream, {
+    // Try creating a manual stream from the fullStream
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const part of result.fullStream) {
+            if (part.type === 'error') {
+              const error: any = part.error;
+              logger.error('Streaming error in manual stream:', error);
+              controller.error(error);
+              return;
+            }
+            if (part.type === 'text-delta') {
+              const chunk = encoder.encode(part.textDelta);
+              controller.enqueue(chunk);
+            }
+          }
+          controller.close();
+        } catch (error) {
+          logger.error('Error in manual stream:', error);
+          controller.error(error);
+        }
+      },
+    });
+
+    // Return the manual stream
+    return new Response(stream, {
       status: 200,
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
