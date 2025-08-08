@@ -11,18 +11,31 @@ export class LLMManager {
   private _modelList: ModelInfo[] = [];
   private readonly _env: any = {};
 
-  private constructor(_env: Record<string, string>) {
+  private constructor(_env: Record<string, any>) {
     this._registerProvidersFromDirectory();
     this._env = _env;
   }
 
-  static getInstance(env: Record<string, string> = {}): LLMManager {
+  static getInstance(env: Record<string, any> = {}): LLMManager {
+    // If we have a new environment context, reinitialize the singleton
+    if (LLMManager._instance && Object.keys(env).length > 0) {
+      // Check if the environment has changed
+      const currentEnv = LLMManager._instance._env;
+      const hasChanged = Object.keys(env).some((key) => currentEnv[key] !== env[key]);
+
+      if (hasChanged) {
+        logger.info('Environment changed, reinitializing LLMManager');
+        LLMManager._instance = new LLMManager(env);
+      }
+    }
+
     if (!LLMManager._instance) {
       LLMManager._instance = new LLMManager(env);
     }
 
     return LLMManager._instance;
   }
+
   get env() {
     return this._env;
   }
@@ -77,7 +90,7 @@ export class LLMManager {
   async updateModelList(options: {
     apiKeys?: Record<string, string>;
     providerSettings?: Record<string, IProviderSetting>;
-    serverEnv?: Record<string, string>;
+    serverEnv?: Record<string, any>;
   }): Promise<ModelInfo[]> {
     const { apiKeys, providerSettings, serverEnv } = options;
 
@@ -102,90 +115,67 @@ export class LLMManager {
             return cachedModels;
           }
 
-          const dynamicModels = await provider
-            .getDynamicModels(apiKeys, providerSettings?.[provider.name], serverEnv)
-            .then((models) => {
-              logger.info(`Caching ${models.length} dynamic models for ${provider.name}`);
-              provider.storeDynamicModels(options, models);
+          try {
+            const models = await provider.getDynamicModels(apiKeys, providerSettings?.[provider.name], serverEnv);
+            provider.storeDynamicModels(options, models);
 
-              return models;
-            })
-            .catch((err) => {
-              logger.error(`Error getting dynamic models ${provider.name} :`, err);
-              return [];
-            });
-
-          return dynamicModels;
+            return models;
+          } catch (error) {
+            logger.warn(`Failed to get dynamic models for ${provider.name}:`, error);
+            return [];
+          }
         }),
     );
-    const staticModels = Array.from(this._providers.values()).flatMap((p) => p.staticModels || []);
-    const dynamicModelsFlat = dynamicModels.flat();
-    const dynamicModelKeys = dynamicModelsFlat.map((d) => `${d.name}-${d.provider}`);
-    const filteredStaticModesl = staticModels.filter((m) => !dynamicModelKeys.includes(`${m.name}-${m.provider}`));
 
-    // Combine static and dynamic models
-    const modelList = [...dynamicModelsFlat, ...filteredStaticModesl];
-    modelList.sort((a, b) => a.name.localeCompare(b.name));
-    this._modelList = modelList;
+    const allDynamicModels = dynamicModels.flat();
 
-    return modelList;
+    this._modelList = [
+      ...Array.from(this._providers.values())
+        .filter((provider) => enabledProviders.includes(provider.name))
+        .flatMap((provider) => provider.staticModels),
+      ...allDynamicModels,
+    ];
+
+    return this._modelList;
   }
+
   getStaticModelList() {
-    return [...this._providers.values()].flatMap((p) => p.staticModels || []);
+    return Array.from(this._providers.values()).flatMap((provider) => provider.staticModels);
   }
+
   async getModelListFromProvider(
     providerArg: BaseProvider,
     options: {
       apiKeys?: Record<string, string>;
       providerSettings?: Record<string, IProviderSetting>;
-      serverEnv?: Record<string, string>;
+      serverEnv?: Record<string, any>;
     },
   ): Promise<ModelInfo[]> {
-    const provider = this._providers.get(providerArg.name);
-
-    if (!provider) {
-      throw new Error(`Provider ${providerArg.name} not found`);
-    }
-
-    const staticModels = provider.staticModels || [];
-
-    if (!provider.getDynamicModels) {
-      return staticModels;
-    }
-
     const { apiKeys, providerSettings, serverEnv } = options;
 
-    const cachedModels = provider.getModelsFromCache({
-      apiKeys,
-      providerSettings,
-      serverEnv,
-    });
+    const cachedModels = providerArg.getModelsFromCache(options);
 
     if (cachedModels) {
-      logger.info(`Found ${cachedModels.length} cached models for ${provider.name}`);
-      return [...cachedModels, ...staticModels];
+      return cachedModels;
     }
 
-    logger.info(`Getting dynamic models for ${provider.name}`);
+    if (!providerArg.getDynamicModels) {
+      return providerArg.staticModels;
+    }
 
-    const dynamicModels = await provider
-      .getDynamicModels?.(apiKeys, providerSettings?.[provider.name], serverEnv)
-      .then((models) => {
-        logger.info(`Got ${models.length} dynamic models for ${provider.name}`);
-        provider.storeDynamicModels(options, models);
+    try {
+      const dynamicModels = await providerArg.getDynamicModels(
+        apiKeys,
+        providerSettings?.[providerArg.name],
+        serverEnv,
+      );
+      providerArg.storeDynamicModels(options, dynamicModels);
 
-        return models;
-      })
-      .catch((err) => {
-        logger.error(`Error getting dynamic models ${provider.name} :`, err);
-        return [];
-      });
-    const dynamicModelsName = dynamicModels.map((d) => d.name);
-    const filteredStaticList = staticModels.filter((m) => !dynamicModelsName.includes(m.name));
-    const modelList = [...dynamicModels, ...filteredStaticList];
-    modelList.sort((a, b) => a.name.localeCompare(b.name));
-
-    return modelList;
+      return [...providerArg.staticModels, ...dynamicModels];
+    } catch (error) {
+      logger.warn(`Failed to get dynamic models for ${providerArg.name}:`, error);
+      return providerArg.staticModels;
+    }
   }
   getStaticModelListFromProvider(providerArg: BaseProvider) {
     const provider = this._providers.get(providerArg.name);

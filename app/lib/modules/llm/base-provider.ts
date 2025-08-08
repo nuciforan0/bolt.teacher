@@ -20,7 +20,7 @@ export abstract class BaseProvider implements ProviderInfo {
   getProviderBaseUrlAndKey(options: {
     apiKeys?: Record<string, string>;
     providerSettings?: IProviderSetting;
-    serverEnv?: Record<string, string>;
+    serverEnv?: Record<string, any>;
     defaultBaseUrlKey: string;
     defaultApiTokenKey: string;
   }) {
@@ -36,7 +36,7 @@ export abstract class BaseProvider implements ProviderInfo {
     let baseUrl =
       settingsBaseUrl ||
       serverEnv?.[baseUrlKey] ||
-      process?.env?.[baseUrlKey] ||
+      (typeof process !== 'undefined' && process?.env?.[baseUrlKey]) ||
       manager.env?.[baseUrlKey] ||
       this.config.baseUrl;
 
@@ -46,7 +46,24 @@ export abstract class BaseProvider implements ProviderInfo {
 
     const apiTokenKey = this.config.apiTokenKey || defaultApiTokenKey;
     const apiKey =
-      apiKeys?.[this.name] || serverEnv?.[apiTokenKey] || process?.env?.[apiTokenKey] || manager.env?.[apiTokenKey];
+      apiKeys?.[this.name] ||
+      serverEnv?.[apiTokenKey] ||
+      (typeof process !== 'undefined' && process?.env?.[apiTokenKey]) ||
+      manager.env?.[apiTokenKey];
+
+    // Debug logging for API key resolution
+    if (!apiKey && this.name === 'Anthropic') {
+      console.log('API key resolution debug for Anthropic:', {
+        providerName: this.name,
+        apiTokenKey,
+        hasApiKeysFromCookie: !!apiKeys?.[this.name],
+        hasServerEnv: !!serverEnv?.[apiTokenKey],
+        hasProcessEnv: !!(typeof process !== 'undefined' && process?.env?.[apiTokenKey]),
+        hasManagerEnv: !!manager.env?.[apiTokenKey],
+        serverEnvKeys: Object.keys(serverEnv || {}),
+        managerEnvKeys: Object.keys(manager.env || {}),
+      });
+    }
 
     return {
       baseUrl,
@@ -56,7 +73,7 @@ export abstract class BaseProvider implements ProviderInfo {
   getModelsFromCache(options: {
     apiKeys?: Record<string, string>;
     providerSettings?: Record<string, IProviderSetting>;
-    serverEnv?: Record<string, string>;
+    serverEnv?: Record<string, any>;
   }): ModelInfo[] | null {
     if (!this.cachedDynamicModels) {
       // console.log('no dynamic models',this.name);
@@ -77,7 +94,7 @@ export abstract class BaseProvider implements ProviderInfo {
   getDynamicModelsCacheKey(options: {
     apiKeys?: Record<string, string>;
     providerSettings?: Record<string, IProviderSetting>;
-    serverEnv?: Record<string, string>;
+    serverEnv?: Record<string, any>;
   }) {
     return JSON.stringify({
       apiKeys: options.apiKeys?.[this.name],
@@ -89,7 +106,7 @@ export abstract class BaseProvider implements ProviderInfo {
     options: {
       apiKeys?: Record<string, string>;
       providerSettings?: Record<string, IProviderSetting>;
-      serverEnv?: Record<string, string>;
+      serverEnv?: Record<string, any>;
     },
     models: ModelInfo[],
   ) {
@@ -106,12 +123,12 @@ export abstract class BaseProvider implements ProviderInfo {
   getDynamicModels?(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
-    serverEnv?: Record<string, string>,
+    serverEnv?: Record<string, any>,
   ): Promise<ModelInfo[]>;
 
   abstract getModelInstance(options: {
     model: string;
-    serverEnv?: Env;
+    serverEnv?: Record<string, any>;
     apiKeys?: Record<string, string>;
     providerSettings?: Record<string, IProviderSetting>;
   }): LanguageModelV1;

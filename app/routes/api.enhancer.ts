@@ -1,12 +1,35 @@
-import { type ActionFunctionArgs } from '@remix-run/cloudflare';
+import { type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/cloudflare';
 import { streamText } from '~/lib/.server/llm/stream-text';
 import { stripIndents } from '~/utils/stripIndent';
 import type { ProviderInfo } from '~/types/model';
 import { getApiKeysFromCookie, getProviderSettingsFromCookie } from '~/lib/api/cookies';
 import { createScopedLogger } from '~/utils/logger';
+import { LLMManager } from '~/lib/modules/llm/manager';
 
 export async function action(args: ActionFunctionArgs) {
   return enhancerAction(args);
+}
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  // Diagnostic endpoint to check environment variables
+  const cloudflareEnv = context?.cloudflare?.env as any;
+  const envKeys = Object.keys(cloudflareEnv || {});
+  const hasAnthropicKey = !!cloudflareEnv?.ANTHROPIC_API_KEY;
+
+  return new Response(
+    JSON.stringify({
+      hasCloudflareEnv: !!cloudflareEnv,
+      envKeys,
+      hasAnthropicKey,
+      anthropicKeyLength: cloudflareEnv?.ANTHROPIC_API_KEY?.length || 0,
+    }),
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
 }
 
 const logger = createScopedLogger('api.enhancher');
@@ -39,6 +62,20 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
   const cookieHeader = request.headers.get('Cookie');
   const apiKeys = getApiKeysFromCookie(cookieHeader);
   const providerSettings = getProviderSettingsFromCookie(cookieHeader);
+
+  // Ensure LLMManager is initialized with Cloudflare environment
+  const cloudflareEnv = context?.cloudflare?.env as any;
+  LLMManager.getInstance(cloudflareEnv);
+
+  // Debug logging to help diagnose API key issues
+  logger.info('Enhancer request:', {
+    provider: providerName,
+    model,
+    hasApiKeysFromCookie: !!apiKeys?.[providerName],
+    hasCloudflareEnv: !!cloudflareEnv,
+    cloudflareEnvKeys: Object.keys(cloudflareEnv || {}),
+    anthropicKeyInEnv: !!cloudflareEnv?.ANTHROPIC_API_KEY,
+  });
 
   try {
     const result = await streamText({
@@ -77,7 +114,7 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
           `,
         },
       ],
-      env: context.cloudflare?.env as any,
+      env: cloudflareEnv,
       apiKeys,
       providerSettings,
       options: {
@@ -120,15 +157,17 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
       },
     });
   } catch (error: unknown) {
-    console.log(error);
+    console.log('Enhancer error:', error);
 
     if (error instanceof Error && error.message?.includes('API key')) {
+      logger.error('API key error in enhancer:', error.message);
       throw new Response('Invalid or missing API key', {
         status: 401,
         statusText: 'Unauthorized',
       });
     }
 
+    logger.error('Unexpected error in enhancer:', error);
     throw new Response(null, {
       status: 500,
       statusText: 'Internal Server Error',

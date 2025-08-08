@@ -45,7 +45,7 @@ export default class AnthropicProvider extends BaseProvider {
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
-    serverEnv?: Record<string, string>,
+    serverEnv?: Record<string, any>,
   ): Promise<ModelInfo[]> {
     const { apiKey } = this.getProviderBaseUrlAndKey({
       apiKeys,
@@ -81,7 +81,7 @@ export default class AnthropicProvider extends BaseProvider {
 
   getModelInstance: (options: {
     model: string;
-    serverEnv: Env;
+    serverEnv?: Record<string, any>;
     apiKeys?: Record<string, string>;
     providerSettings?: Record<string, IProviderSetting>;
   }) => LanguageModelV1 = (options) => {

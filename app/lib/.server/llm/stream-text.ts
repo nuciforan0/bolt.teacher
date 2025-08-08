@@ -36,7 +36,7 @@ function sanitizeText(text: string): string {
 
 export async function streamText(props: {
   messages: Omit<Message, 'id'>[];
-  env?: Env;
+  env?: Record<string, any>;
   options?: StreamingOptions;
   apiKeys?: Record<string, string>;
   files?: FileMap;
@@ -198,7 +198,7 @@ export async function streamText(props: {
   return await _streamText({
     model: provider.getModelInstance({
       model: modelDetails.name,
-      serverEnv,
+      serverEnv: serverEnv as any,
       apiKeys,
       providerSettings,
     }),
