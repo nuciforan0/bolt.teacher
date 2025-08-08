@@ -146,6 +146,14 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
       },
     });
 
+    logger.info('streamText result:', {
+      hasResult: !!result,
+      hasTextStream: !!result.textStream,
+      textStreamType: typeof result.textStream,
+      hasFullStream: !!result.fullStream,
+      fullStreamType: typeof result.fullStream,
+    });
+
     // Handle streaming errors in a non-blocking way
     (async () => {
       try {
@@ -165,9 +173,7 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
     return new Response(result.textStream, {
       status: 200,
       headers: {
-        'Content-Type': 'text/event-stream',
-        Connection: 'keep-alive',
-        'Cache-Control': 'no-cache',
+        'Content-Type': 'text/plain; charset=utf-8',
       },
     });
   } catch (error: unknown) {
