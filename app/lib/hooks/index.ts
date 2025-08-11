@@ -1,5 +1,6 @@
 export * from './useMessageParser';
 export * from './usePromptEnhancer';
+export * from './usePromptIterator';
 export * from './useShortcuts';
 export * from './StickToBottom';
 export * from './useEditChatDescription';

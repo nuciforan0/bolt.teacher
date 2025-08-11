@@ -48,6 +48,8 @@ interface BaseChatProps {
   description?: string;
   enhancingPrompt?: boolean;
   promptEnhanced?: boolean;
+  iteratingPrompt?: boolean;
+  promptIterated?: boolean;
   input?: string;
   model?: string;
   setModel?: (model: string) => void;
@@ -58,6 +60,7 @@ interface BaseChatProps {
   sendMessage?: (event: React.UIEvent, messageInput?: string) => void;
   handleInputChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   enhancePrompt?: () => void;
+  iteratePrompt?: () => void;
   importChat?: (description: string, messages: Message[]) => Promise<void>;
   exportChat?: () => void;
   uploadedFiles?: File[];
@@ -98,10 +101,13 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       providerList,
       input = '',
       enhancingPrompt,
+      iteratingPrompt,
+      promptIterated,
       handleInputChange,
 
       // promptEnhanced,
       enhancePrompt,
+      iteratePrompt,
       sendMessage,
       handleStop,
       importChat,
@@ -451,6 +457,9 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   handleSendMessage={handleSendMessage}
                   enhancingPrompt={enhancingPrompt}
                   enhancePrompt={enhancePrompt}
+                  iteratingPrompt={iteratingPrompt}
+                  promptIterated={promptIterated}
+                  iteratePrompt={iteratePrompt}
                   isListening={isListening}
                   startListening={startListening}
                   stopListening={stopListening}

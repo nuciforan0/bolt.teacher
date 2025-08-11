@@ -7,7 +7,7 @@ import { createScopedLogger } from '~/utils/logger';
 import { LLMManager } from '~/lib/modules/llm/manager';
 
 export async function action(args: ActionFunctionArgs) {
-  return enhancerAction(args);
+  return iteraterAction(args);
 }
 
 export async function loader({ context }: LoaderFunctionArgs) {
@@ -32,9 +32,9 @@ export async function loader({ context }: LoaderFunctionArgs) {
   );
 }
 
-const logger = createScopedLogger('api.enhancher');
+const logger = createScopedLogger('api.iterater');
 
-async function enhancerAction({ context, request }: ActionFunctionArgs) {
+async function iteraterAction({ context, request }: ActionFunctionArgs) {
   const { message, model, provider } = await request.json<{
     message: string;
     model: string;
@@ -68,7 +68,7 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
   LLMManager.getInstance(cloudflareEnv);
 
   // Debug logging to help diagnose API key issues
-  logger.info('Enhancer request:', {
+  logger.info('Iterator request:', {
     provider: providerName,
     providerNameType: typeof providerName,
     model,
@@ -99,90 +99,44 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
           content:
             `[Model: ${model}]\n\n[Provider: ${providerName}]\n\n` +
             stripIndents`
-            You are a professional prompt engineer specializing in crafting precise, effective prompts.
-            Your task is to enhance prompts by making them more specific, actionable, and effective.
+            The user you are interacting with doesn't have much tech literacy or understanding of technology, so its your job to understand what exactly they want and don't want on their website
+            You are to analyse the tech illiterate users' product ideas and ask questions to better guide the user to further refine their idea.
+            The questions should be aimed at adding further details and features, while also ensuring clarity. If there is any implementation which is ambigiuous, ask clarifiying questions
+            You shoud NOT ask any technical questions like asking the type of web stack or technologies that should be used.
+            You should NOT ask any questions relating to logging in or registering accounts
+            You should NOT ask any questions about adding print functionality
+            For Example, lets say the user prompts "I want to make a website which my students where they get a test on the Roman Empire"
 
-            I want you to improve the user prompt that is wrapped in \`<original_prompt>\` tags.
-
-            The prompt will be structured something like the below, with an idea from the user & then questions and answers detailing further features they want to have implemented into the project.
+            The output would look something like this:
             "
             I want to make a website which my students where they get a test on the Roman Empire
 
+              Do you want a page where you can view the results?
+              Do you want a page where you can change the details of the exam?
+ 
+              Write your answer next to the question. If you want more questions, click iterate again. If you are happy with your prompt, click Enhance prompt, and then once that is done, submit it to bolt
+            "
+
+
+            Then this could continue forever, you must accomodate from previous answers and give further questions. 
+            IMPORTANT: You must keep the informationm from the last response the EXACTLY SAME, and it must keep the questions & answers that the user has previously answered
+            Continuing fron the last example, the next output could end up looking like this:
+
+            "
+            I want to make a website which my students where they get a test on the Roman Empire
               Do you want a page where you can view the results? Yes I would actually
               Do you want a page where you can change the details of the exam? Yes please
-              Do you want AI to give feedback to the students on how they could improve their work? Yes please
-              What type of questions do you want on the exam, Multiple Choice, Short Response, Long Response, etc? Only multiple choice thanks
-              Do you want images or diagrams to be shown in the exam? Yes please, just diagrams though
-              Do you want students to see their results? Afterwards sure
-              If so, do you want students to see what questions they got wrong and the correct answers? No, just tell them how many they got right.
-              How do you want the AI to act? (ie do you want it to give the answer in a professional manner, be more conversational, and informal, etc) 
+              
+              What type of questions do you want on the exam, Multiple Choice, Short Response, Long Response, etc?
+              Do you want images or diagrams to be shown in the exam?
+              Do you want students to see their results?
+              If so, do you want students to see what questions they got wrong and the correct answers?
               
               Write your answer next to the question. If you want more questions, click iterate again. If you are happy with your prompt, click Enhance prompt, and then once that is done, submit it to bolt
             "
 
-            For valid prompts:
-            - Make instructions explicit and unambiguous
-            - Add relevant context and constraints
-            - Remove redundant information
-            - Maintain the core intent
-            - Ensure the prompt is self-contained
-            - Use professional language
+            The text after the questions are the responses from the user to the questions previously asked by AI. They should not be modified at all. But new questions should be asked afterwards, with a seperating new line between the old questions and the new questions.
 
-            For invalid or unclear prompts:
-            - Respond with clear, professional guidance
-            - Keep responses concise and actionable
-            - Maintain a helpful, constructive tone
-            - Focus on what the user should provide
-            - Use the example prompt for guidance and consistency
-
-            IMPORTANT: Make sure to follow the Example Prompt's structure. 
-            - Each prompt must be main in the same framework, database, LTI Integration, dual mode support & developmental AI.
-            - The only thing that should change from the example prompt is the functionalities required for the original prompts idea, including the views & description of what should be made.
-            
-            **Example Prompt:**
-            *Project Idea*
-            I need to implement the frontend for a Roman Empire quiz application that is LTI 1.0 compliant.
-
-            **Current Status & Context:**
-            I have ALREADY created the backend "bouncer" (\`bouncer.js\` using Node.js/Express/ims-lti). It is complete and running. You DO NOT need to create or modify any backend code. Your sole focus is the frontend React application.
-
-            **Your Task:**
-            Create the complete frontend for the application, adhering to the following requirements.
-
-            ---
-
-            **Frontend Technical Requirements:**
-            - **Framework:** Vite + React + TypeScript.
-            - **Database:** Use \`sql.js\` and persist the database to \`localStorage\` after every write operation.
-            - **LTI Integration:** The frontend must correctly handle the handoff from the LTI bouncer.
-
-            **Frontend Functional Requirements:**
-
-            1.  **Dual-Mode Operation:**
-                - If launched with an \`lti_token\` in the URL hash, the app must immediately process it, log the user in, and show the correct view below. **The Mock Launcher must be skipped entirely.**
-                - If launched without a token, the app must display a **Mock LTI Launcher** form (Name, Role) for development testing.
-
-            2.  **Role-Based Views:**
-                - **Student View:**
-                    - Display a multiple-choice/short-answer quiz about the Roman Empire.
-                    - After submission, show the user their score and provide correct answers.
-                    - Save the student's name, score, and answers to the \`sql.js\` database.
-                - **Teacher View:**
-                    - Display a dashboard with a table of all student test results from the database.
-                    - The dashboard must include features to filter results by student name and to sort by score and submission date.
-
-            3.  **Development-Only UI:**
-                - Both the Student and Teacher views must contain a "Reset" or "Log Out" button. 
-                - IMPORTANT: These buttons should only clear the user session, and not remove elements which ave been added into local storage by the user.
-                - **CRITICAL:** This button must ONLY be visible when the application is in Development Mode (i.e., launched from the Mock Launcher). You will detect this by checking if the \`user\` object from the session lacks a \`courseId\` property.
-
-            ---
-
-            Please provide the complete, organized source code for the **frontend application only**.
-
-
-            VERY IMPORTANT: Your response must ONLY contain the enhanced prompt text.
-            Do not include any explanations, metadata, or wrapper tags.
 
             <original_prompt>
               ${message}
@@ -278,17 +232,17 @@ async function enhancerAction({ context, request }: ActionFunctionArgs) {
       },
     });
   } catch (error: unknown) {
-    console.log('Enhancer error:', error);
+    console.log('Iterater error:', error);
 
     if (error instanceof Error && error.message?.includes('API key')) {
-      logger.error('API key error in enhancer:', error.message);
+      logger.error('API key error in iterater:', error.message);
       throw new Response('Invalid or missing API key', {
         status: 401,
         statusText: 'Unauthorized',
       });
     }
 
-    logger.error('Unexpected error in enhancer:', error);
+    logger.error('Unexpected error in iterater:', error);
     throw new Response(null, {
       status: 500,
       statusText: 'Internal Server Error',

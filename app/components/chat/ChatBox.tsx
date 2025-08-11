@@ -55,6 +55,9 @@ interface ChatBoxProps {
   handleStop?: (() => void) | undefined;
   enhancingPrompt?: boolean | undefined;
   enhancePrompt?: (() => void) | undefined;
+  iteratingPrompt?: boolean | undefined;
+  promptIterated?: boolean | undefined;
+  iteratePrompt?: (() => void) | undefined;
   chatMode?: 'discuss' | 'build';
   setChatMode?: (mode: 'discuss' | 'build') => void;
   designScheme?: DesignScheme;
@@ -278,6 +281,21 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
                 <div className="i-svg-spinners:90-ring-with-bg text-bolt-elements-loader-progress text-xl animate-spin"></div>
               ) : (
                 <div className="i-bolt:stars text-xl"></div>
+              )}
+            </IconButton>
+            <IconButton
+              title="Iterate prompt"
+              disabled={props.input.length === 0 || props.iteratingPrompt}
+              className={classNames('transition-all', props.iteratingPrompt ? 'opacity-100' : '')}
+              onClick={() => {
+                props.iteratePrompt?.();
+                toast.success('Prompt iterated!');
+              }}
+            >
+              {props.iteratingPrompt ? (
+                <div className="i-svg-spinners:90-ring-with-bg text-bolt-elements-loader-progress text-xl animate-spin"></div>
+              ) : (
+                <div className="i-ph:arrow-clockwise text-xl"></div>
               )}
             </IconButton>
 

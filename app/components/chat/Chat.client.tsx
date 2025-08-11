@@ -4,7 +4,7 @@ import { useChat } from '@ai-sdk/react';
 import { useAnimate } from 'framer-motion';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { cssTransition, toast, ToastContainer } from 'react-toastify';
-import { useMessageParser, usePromptEnhancer, useShortcuts } from '~/lib/hooks';
+import { useMessageParser, usePromptEnhancer, usePromptIterator, useShortcuts } from '~/lib/hooks';
 import { description, useChatHistory } from '~/lib/persistence';
 import { chatStore } from '~/lib/stores/chat';
 import { workbenchStore } from '~/lib/stores/workbench';
@@ -225,6 +225,7 @@ export const ChatImpl = memo(
     }, [model, provider, searchParams]);
 
     const { enhancingPrompt, promptEnhanced, enhancePrompt, resetEnhancer } = usePromptEnhancer();
+    const { iteratingPrompt, promptIterated, iteratePrompt, resetIterator } = usePromptIterator();
     const { parsedMessages, parseMessages } = useMessageParser();
 
     const TEXTAREA_MAX_HEIGHT = chatStarted ? 400 : 200;
@@ -500,6 +501,7 @@ export const ChatImpl = memo(
               setImageDataList([]);
 
               resetEnhancer();
+              resetIterator();
 
               textareaRef.current?.blur();
               setFakeLoading(false);
@@ -531,6 +533,7 @@ export const ChatImpl = memo(
         setImageDataList([]);
 
         resetEnhancer();
+        resetIterator();
 
         textareaRef.current?.blur();
 
@@ -585,6 +588,7 @@ export const ChatImpl = memo(
       setImageDataList([]);
 
       resetEnhancer();
+      resetIterator();
 
       textareaRef.current?.blur();
     };
@@ -640,6 +644,8 @@ export const ChatImpl = memo(
         }}
         enhancingPrompt={enhancingPrompt}
         promptEnhanced={promptEnhanced}
+        iteratingPrompt={iteratingPrompt}
+        promptIterated={promptIterated}
         sendMessage={sendMessage}
         model={model}
         setModel={handleModelChange}
@@ -666,6 +672,18 @@ export const ChatImpl = memo(
         })}
         enhancePrompt={() => {
           enhancePrompt(
+            input,
+            (input) => {
+              setInput(input);
+              scrollTextArea();
+            },
+            model,
+            provider,
+            apiKeys,
+          );
+        }}
+        iteratePrompt={() => {
+          iteratePrompt(
             input,
             (input) => {
               setInput(input);
