@@ -33,6 +33,9 @@ import { ChatBox } from './ChatBox';
 import type { DesignScheme } from '~/types/design-scheme';
 import type { ElementInfo } from '~/components/workbench/Inspector';
 import LlmErrorAlert from './LLMApiAlert';
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '~/components/ui/Collapsible';
+import { GlowingEffect } from '~/components/ui/GlowingEffect';
+import { Card, CardContent } from '~/components/ui/Card';
 
 const TEXTAREA_MIN_HEIGHT = 76;
 
@@ -355,14 +358,19 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
             {!chatStarted && (
-              <div id="intro" className="mt-[16vh] max-w-2xl mx-auto text-center px-4 lg:px-0">
-                <h1 className="text-3xl lg:text-6xl font-bold text-bolt-elements-textPrimary mb-4 animate-fade-in">
-                  Where ideas begin
-                </h1>
-                <p className="text-md lg:text-xl mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
-                  Bring ideas to life in seconds or get help on existing projects.
-                </p>
-              </div>
+              <>
+                <div id="intro" className="mt-[16vh] max-w-2xl mx-auto text-center px-4 lg:px-0">
+                  <h1 className="text-3xl lg:text-6xl font-bold text-bolt-elements-textPrimary mb-4 animate-fade-in">
+                    Where ideas begin
+                  </h1>
+                  <p className="text-md lg:text-xl mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
+                    Bring ideas to life in seconds or get help on existing projects.
+                  </p>
+                </div>
+                <div className="flex justify-center w-full mb-8">
+                  <HowToUseBoltCollapsible />
+                </div>
+              </>
             )}
             <StickToBottom
               className={classNames('pt-6 px-2 sm:px-6 relative', {
@@ -510,6 +518,208 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
     return <Tooltip.Provider delayDuration={200}>{baseChat}</Tooltip.Provider>;
   },
 );
+
+function HowToUseBoltCollapsible() {
+  const [open, setOpen] = useState(true);
+
+  // Accent and circle color
+  const accent = 'rgb(21,182,180)';
+  const circle = 'rgb(18,150,148)';
+  const subduedWhite = 'rgba(255,255,255,0.7)';
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <div
+        className="relative min-h-[80px] flex items-center justify-center mx-auto border-2 pointer-events-auto"
+        style={{
+          width: '32rem',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
+          borderColor: open ? subduedWhite : 'transparent',
+          transition: 'border-color 0.3s, opacity 0.3s',
+          borderRadius: '1rem', // rounded-2xl is 1rem
+        }}
+      >
+        {/* The glow is only visible when open, but the container always reserves space */}
+        <div className="absolute inset-0 z-0 pointer-events-none flex items-stretch" style={{ borderRadius: '1rem' }}>
+          <GlowingEffect
+            variant="white"
+            glow={open}
+            blur={16}
+            spread={40}
+            borderWidth={2}
+            disabled={!open}
+            className=""
+          />
+          {/* boxShadow overlay, only when open */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              boxShadow: open ? '0 0 32px 8px rgba(255,255,255,0.18)' : 'none',
+              transition: 'box-shadow 0.3s',
+              opacity: open ? 1 : 0,
+              borderRadius: '1rem',
+            }}
+          />
+        </div>
+        <Card
+          className={
+            'relative bg-white/90 dark:bg-bolt-elements-background-depth-2 transition-all duration-300 w-full min-w-full max-w-full z-10 min-h-[80px] flex flex-col justify-center'
+          }
+          style={{ boxSizing: 'border-box', width: '100%', border: 'none', borderRadius: '1rem' }}
+        >
+          <CollapsibleTrigger asChild>
+            <button
+              className="w-full flex items-center justify-between px-6 py-4 rounded-lg font-semibold text-lg select-none min-h-[64px] h-[64px] focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0 border-none bg-transparent"
+              style={{ boxSizing: 'border-box', width: '100%', alignItems: 'center' }}
+              aria-expanded={open}
+              tabIndex={0}
+            >
+              <span className="flex items-center gap-2 h-full" style={{ alignItems: 'center' }}>
+                <span className="i-ph:lightbulb" style={{ color: accent, fontSize: 24, display: 'inline-block' }} />
+                <span
+                  className="i-ph:lightning"
+                  style={{ color: accent, fontSize: 20, display: 'inline-block', marginLeft: -6, marginRight: 2 }}
+                />
+                How to use Bolt
+              </span>
+              <span
+                className={
+                  'i-ph:caret-down ml-2 text-bolt-elements-textTertiary text-xl transition-transform duration-200' +
+                  (open ? ' rotate-180' : '')
+                }
+                aria-hidden="true"
+                style={{ alignSelf: 'center' }}
+              />
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent forceMount>
+            {open && (
+              <CardContent className="pt-2 pb-4">
+                <ol className="list-none pl-0 space-y-3 text-white text-base">
+                  <li className="flex items-center gap-3">
+                    <span
+                      style={{
+                        background: circle,
+                        color: 'white',
+                        width: 32,
+                        height: 32,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        fontWeight: 400,
+                        fontSize: 18,
+                        flexShrink: 0,
+                      }}
+                    >
+                      1
+                    </span>
+                    <span className="flex-1">Write your project idea for your class in the textbox below</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <span
+                      style={{
+                        background: circle,
+                        color: 'white',
+                        width: 32,
+                        height: 32,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        fontWeight: 400,
+                        fontSize: 18,
+                        flexShrink: 0,
+                      }}
+                    >
+                      2
+                    </span>
+                    <span className="flex-1">
+                      Iterate on your project idea with the
+                      <span
+                        style={{
+                          color: accent,
+                          fontWeight: 400,
+                          margin: '0 0.5em',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        (
+                        <span
+                          className="i-ph:arrow-clockwise"
+                          style={{ color: accent, fontSize: 18, margin: '0 0.2em' }}
+                        />
+                        )
+                      </span>
+                      button
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <span
+                      style={{
+                        background: circle,
+                        color: 'white',
+                        width: 32,
+                        height: 32,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        fontWeight: 400,
+                        fontSize: 18,
+                        flexShrink: 0,
+                      }}
+                    >
+                      3
+                    </span>
+                    <span className="flex-1">
+                      Press the enhance button
+                      <span
+                        style={{
+                          color: accent,
+                          fontWeight: 400,
+                          margin: '0 0.5em',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        (
+                        <span className="i-bolt:stars" style={{ color: accent, fontSize: 18, margin: '0 0.2em' }} />)
+                      </span>
+                      to improve your prompt
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <span
+                      style={{
+                        background: circle,
+                        color: 'white',
+                        width: 32,
+                        height: 32,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        fontWeight: 400,
+                        fontSize: 18,
+                        flexShrink: 0,
+                      }}
+                    >
+                      4
+                    </span>
+                    <span className="flex-1">Submit to bolt with your new enhanced prompt</span>
+                  </li>
+                </ol>
+              </CardContent>
+            )}
+          </CollapsibleContent>
+        </Card>
+      </div>
+    </Collapsible>
+  );
+}
 
 function ScrollToBottom() {
   const { isAtBottom, scrollToBottom } = useStickToBottomContext();
