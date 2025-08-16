@@ -367,7 +367,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                     Bring ideas to life in seconds or get help on existing projects.
                   </p>
                 </div>
-                <div className="flex justify-center w-full mb-8">
+                <div className="flex justify-center w-full">
                   <HowToUseBoltCollapsible />
                 </div>
               </>
@@ -485,7 +485,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 />
               </div>
             </StickToBottom>
-            <div className="flex flex-col justify-center">
+            <div className="hidden">
               {!chatStarted && (
                 <div className="flex justify-center gap-2">
                   {ImportButtons(importChat)}
@@ -520,7 +520,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
 );
 
 function HowToUseBoltCollapsible() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   // Accent and circle color
   const accent = 'rgb(21,182,180)';
@@ -530,14 +530,18 @@ function HowToUseBoltCollapsible() {
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <div
-        className="relative min-h-[80px] flex items-center justify-center mx-auto border-2 pointer-events-auto"
+        className="relative flex items-center justify-center mx-auto border-2 pointer-events-auto"
         style={{
-          width: '32rem',
+          width: '38rem',
           maxWidth: '100%',
           boxSizing: 'border-box',
           borderColor: open ? subduedWhite : 'transparent',
           transition: 'border-color 0.3s, opacity 0.3s',
-          borderRadius: '1rem', // rounded-2xl is 1rem
+          borderRadius: '1rem',
+          borderWidth: 2,
+          height: open ? undefined : 56,
+          minHeight: 56,
+          overflow: open ? undefined : 'hidden',
         }}
       >
         {/* The glow is only visible when open, but the container always reserves space */}
@@ -564,22 +568,39 @@ function HowToUseBoltCollapsible() {
         </div>
         <Card
           className={
-            'relative bg-white/90 dark:bg-bolt-elements-background-depth-2 transition-all duration-300 w-full min-w-full max-w-full z-10 min-h-[80px] flex flex-col justify-center'
+            'relative bg-white/90 dark:bg-bolt-elements-background-depth-2 transition-all duration-300 w-full min-w-full max-w-full z-10 flex flex-col items-stretch justify-start overflow-hidden'
           }
-          style={{ boxSizing: 'border-box', width: '100%', border: 'none', borderRadius: '1rem' }}
+          style={{
+            boxSizing: 'border-box',
+            width: '100%',
+            border: 'none',
+            borderRadius: '1rem',
+            margin: 0,
+            padding: 0,
+          }}
         >
           <CollapsibleTrigger asChild>
             <button
-              className="w-full flex items-center justify-between px-6 py-4 rounded-lg font-semibold text-lg select-none min-h-[64px] h-[64px] focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0 border-none bg-transparent"
-              style={{ boxSizing: 'border-box', width: '100%', alignItems: 'center' }}
+              className="w-full flex items-center justify-between px-6 rounded-lg font-semibold text-lg select-none h-full focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0 border-none bg-transparent"
+              style={{
+                boxSizing: 'border-box',
+                width: '100%',
+                alignItems: 'center',
+                lineHeight: '56px',
+                paddingTop: 0,
+                paddingBottom: 0,
+                margin: 0,
+              }}
               aria-expanded={open}
               tabIndex={0}
             >
-              <span className="flex items-center gap-2 h-full" style={{ alignItems: 'center' }}>
-                <span className="i-ph:lightbulb" style={{ color: accent, fontSize: 24, display: 'inline-block' }} />
+              <span
+                className="flex items-center gap-2 h-full"
+                style={{ alignItems: 'center', lineHeight: '56px', margin: 0, padding: 0 }}
+              >
                 <span
-                  className="i-ph:lightning"
-                  style={{ color: accent, fontSize: 20, display: 'inline-block', marginLeft: -6, marginRight: 2 }}
+                  className="i-ph:lightbulb"
+                  style={{ color: 'white', fontSize: 24, display: 'inline-block', lineHeight: '56px' }}
                 />
                 How to use Bolt
               </span>
@@ -602,41 +623,41 @@ function HowToUseBoltCollapsible() {
                       style={{
                         background: circle,
                         color: 'white',
-                        width: 32,
-                        height: 32,
+                        width: 24,
+                        height: 24,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '50%',
                         fontWeight: 400,
-                        fontSize: 18,
+                        fontSize: 15,
                         flexShrink: 0,
                       }}
                     >
                       1
                     </span>
-                    <span className="flex-1">Write your project idea for your class in the textbox below</span>
+                    <span className="flex-1">Write your project idea in the textbox below</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <span
                       style={{
                         background: circle,
                         color: 'white',
-                        width: 32,
-                        height: 32,
+                        width: 24,
+                        height: 24,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '50%',
                         fontWeight: 400,
-                        fontSize: 18,
+                        fontSize: 15,
                         flexShrink: 0,
                       }}
                     >
                       2
                     </span>
                     <span className="flex-1">
-                      Iterate on your project idea with the
+                      Iterate on your project idea with the iterate prompt button
                       <span
                         style={{
                           color: accent,
@@ -653,7 +674,6 @@ function HowToUseBoltCollapsible() {
                         />
                         )
                       </span>
-                      button
                     </span>
                   </li>
                   <li className="flex items-center gap-3">
@@ -661,21 +681,21 @@ function HowToUseBoltCollapsible() {
                       style={{
                         background: circle,
                         color: 'white',
-                        width: 32,
-                        height: 32,
+                        width: 24,
+                        height: 24,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '50%',
                         fontWeight: 400,
-                        fontSize: 18,
+                        fontSize: 15,
                         flexShrink: 0,
                       }}
                     >
                       3
                     </span>
                     <span className="flex-1">
-                      Press the enhance button
+                      Press the enhance prompt button
                       <span
                         style={{
                           color: accent,
@@ -696,20 +716,20 @@ function HowToUseBoltCollapsible() {
                       style={{
                         background: circle,
                         color: 'white',
-                        width: 32,
-                        height: 32,
+                        width: 24,
+                        height: 24,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: '50%',
                         fontWeight: 400,
-                        fontSize: 18,
+                        fontSize: 15,
                         flexShrink: 0,
                       }}
                     >
                       4
                     </span>
-                    <span className="flex-1">Submit to bolt with your new enhanced prompt</span>
+                    <span className="flex-1">Submit to bolt with your enhanced prompt</span>
                   </li>
                 </ol>
               </CardContent>
