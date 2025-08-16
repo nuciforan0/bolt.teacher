@@ -150,6 +150,22 @@ export const ChatImpl = memo(
     const [selectedElement, setSelectedElement] = useState<ElementInfo | null>(null);
     const mcpSettings = useMCPStore((state) => state.settings);
 
+    // Dynamic chat width management
+    useEffect(() => {
+      const root = document.documentElement;
+
+      if (chatStarted) {
+        root.style.setProperty('--chat-max-width', '33rem');
+      } else {
+        root.style.setProperty('--chat-max-width', '41.58rem');
+      }
+
+      // Cleanup function to reset to default when component unmounts
+      return () => {
+        root.style.setProperty('--chat-max-width', '33rem');
+      };
+    }, [chatStarted]);
+
     const {
       messages,
       isLoading,
