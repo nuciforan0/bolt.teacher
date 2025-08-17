@@ -7,7 +7,7 @@ Bolt.teacher is a research project for the University of Queensland, and has bee
 ## Setup
 
 ### Prerequisites
-  Node.js is required to run the application.
+  ##### Install Node.js
   
   1. Visit the [Node.js Download Page](https://nodejs.org/en/download/)
   2. Download the "LTS" (Long Term Support) version for your operating system
@@ -25,7 +25,11 @@ Bolt.teacher is a research project for the University of Queensland, and has bee
           echo $PATH
           ```
        3. Look for `/usr/local/bin` in the output
-       4. 
+
+
+  #### Install Git
+  [Download Git](https://git-scm.com/downloads)
+  
 ### Installation
   1. Download bolt.teacher
        ```bash
@@ -63,14 +67,14 @@ Can also be installed using docker which should be the same as what is shown [he
     Build output directory: /build/client
 
     Environment variables (advanced) -> Add variable
-    Add any API keys that you are going to use here. The format should follow similar to the local.env file seen [here]()
+    Add any API keys that you are going to use here. The format should follow the format shown in [.env.example file](https://github.com/nuciforan0/bolt.teacher/blob/main/.env.example)
     For bolt.teacher, we recommend using Anthropic's Claude series, so you should have an ANTHROPIC_API_KEY
 
     Click Save and Deploy
 
     IMPORTANT: After deploying you are not done yet. 
   5. Go to your deployment, click Build Settings, then go to the Project Settings. 
-  6. Scroll down to Variables and Secrets and add the ANTHROPIC_API_KEY (and any other API key's you want to use) here.
+  6. Scroll down to Variables and Secrets and add the API keys you want to use here
   7. Go back to your deployment page and click Manage Deployment -> Retry Deployment
 
 When it is deployed next it should run bolt.teacher, with your API keys automatically connected.
@@ -175,7 +179,8 @@ Node.js is required to run the application.
         ```
      3. Look for `/usr/local/bin` in the output
 
-## Running the Application
+### Install Git
+  [Download Git](https://git-scm.com/downloads)
 
 You have two options for running Bolt.DIY: directly on your machine or using Docker.
 
