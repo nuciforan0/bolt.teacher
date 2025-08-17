@@ -88,9 +88,9 @@ export const TabTile: React.FC<TabTileProps> = ({
                     className={classNames(
                       'text-[15px] font-medium leading-snug mb-2',
                       'text-gray-700 dark:text-gray-200',
-                      'group-hover:text-purple-600 dark:group-hover:text-purple-300/90',
+                      'group-hover:text-[#15b6b4] dark:group-hover:text-[#15b6b4cc]',
                       'transition-colors duration-100 ease-out',
-                      isActive ? 'text-purple-500 dark:text-purple-400/90' : '',
+                      isActive ? 'text-[#15b6b4] dark:text-[#15b6b4]' : '',
                     )}
                   >
                     {TAB_LABELS[tab.id]}
@@ -102,9 +102,9 @@ export const TabTile: React.FC<TabTileProps> = ({
                         'text-gray-500 dark:text-gray-400',
                         'max-w-[85%]',
                         'text-center',
-                        'group-hover:text-purple-500 dark:group-hover:text-purple-400/70',
+                        'group-hover:text-[#15b6b4] dark:group-hover:text-[#15b6b4cc]',
                         'transition-colors duration-100 ease-out',
-                        isActive ? 'text-purple-400 dark:text-purple-400/80' : '',
+                        isActive ? 'text-[#15b6b4] dark:text-[#15b6b4]' : '',
                       )}
                     >
                       {description}
@@ -115,7 +115,7 @@ export const TabTile: React.FC<TabTileProps> = ({
                 {/* Update Indicator with Tooltip */}
                 {hasUpdate && (
                   <>
-                    <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-purple-500 dark:bg-purple-400 animate-pulse" />
+                    <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-[#15b6b4] dark:bg-[#15b6b4] animate-pulse" />
                     <Tooltip.Portal>
                       <Tooltip.Content
                         className={classNames(

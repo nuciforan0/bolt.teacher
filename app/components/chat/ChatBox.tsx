@@ -11,7 +11,6 @@ import { SendButton } from './SendButton.client';
 import { IconButton } from '~/components/ui/IconButton';
 import { toast } from 'react-toastify';
 import { SpeechRecognitionButton } from '~/components/chat/SpeechRecognition';
-import { SupabaseConnection } from './SupabaseConnection';
 import { ExpoQrModal } from '~/components/workbench/ExpoQrModal';
 import styles from './BaseChat.module.scss';
 import type { ProviderInfo } from '~/types/model';
@@ -221,26 +220,12 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
               }
             });
           }}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              if (event.shiftKey) {
-                return;
-              }
-
-              event.preventDefault();
-
-              if (props.isStreaming) {
-                props.handleStop?.();
-                return;
-              }
-
-              // ignore if using input method engine
-              if (event.nativeEvent.isComposing) {
-                return;
-              }
-
-              props.handleSendMessage?.(event);
-            }
+          onKeyDown={() => {
+            /*
+             * Only allow default behavior (new line) for Enter
+             * Do not submit on Enter or Shift+Enter
+             * Remove all previous logic for submission
+             */
           }}
           value={props.input}
           onChange={(event) => {
@@ -323,13 +308,7 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
               )}
             </IconButton>
           </div>
-          {props.input.length > 3 ? (
-            <div className="text-xs text-bolt-elements-textTertiary">
-              Use <kbd className="kdb px-1.5 py-0.5 rounded bg-bolt-elements-background-depth-2">Shift</kbd> +{' '}
-              <kbd className="kdb px-1.5 py-0.5 rounded bg-bolt-elements-background-depth-2">Return</kbd> a new line
-            </div>
-          ) : null}
-          <SupabaseConnection />
+          {props.input.length > 3 ? null : null}
           <ExpoQrModal open={props.qrModalOpen} onClose={() => props.setQrModalOpen(false)} />
         </div>
       </div>
