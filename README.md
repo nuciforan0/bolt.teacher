@@ -1,4 +1,91 @@
-# bolt.diy
+# bolt.teacher
+
+Bolt.teacher is a modified version of [bolt.diy](https://github.com/stackblitz-labs/bolt.diy). As bolt.teacher is largely the same, go to their for further documentation queries. Bolt.teacher has been tuned for teachers to use, so that they can generate LTI 1.0 compliant applications for their classes and be shown on popular Learning Management Services (LMS) such as Blackboard.
+
+Bolt.teacher is a research project for the University of Queensland, and has been made to test how Teachers will utilize the coming wave of generative AI to create new experiences or products that could be used to improve the quality of education. Teachers usually pool through online tools available, but now with generative AI, the possibilities of teacher creating resources for their classes opens up.
+
+## Setup
+
+### Prerequisites
+  Node.js is required to run the application.
+  
+  1. Visit the [Node.js Download Page](https://nodejs.org/en/download/)
+  2. Download the "LTS" (Long Term Support) version for your operating system
+  3. Run the installer, accepting the default settings
+  4. Verify Node.js is properly installed:
+     - **For Windows Users**:
+       1. Press `Windows + R`
+       2. Type "sysdm.cpl" and press Enter
+       3. Go to "Advanced" tab → "Environment Variables"
+       4. Check if `Node.js` appears in the "Path" variable
+     - **For Mac/Linux Users**:
+       1. Open Terminal
+       2. Type this command:
+          ```bash
+          echo $PATH
+          ```
+       3. Look for `/usr/local/bin` in the output
+       4. 
+### Installation
+  1. Download bolt.teacher
+       ```bash
+       git clone https://github.com/nuciforan0/bolt.teacher.git
+       ```
+  2. Install Package Manager (pnpm)
+      ```bash
+      npm install -g pnpm
+      ```
+  3.   Move to the bolt.teacher directory in terminal
+        ```bash
+       cd bolt.teacher
+       ```
+  4.   Install Project dependencies
+       ```bash
+       pnpm install
+       ```
+  5.   Start the application
+       ```bash
+       pnpm run dev
+       ```
+       
+Can also be installed using docker which should be the same as what is shown [here](https://github.com/stackblitz-labs/bolt.diy?tab=readme-ov-file#option-2-using-docker)
+
+## Deployment
+  There are other ways to deploy but this is what I chose to do for bolt.teacher
+  1. Create a cloudflare account [here](https://pages.cloudflare.com/) and a github account [here](https://github.com/) 
+  2. Create a new repository of bolt.teacher which is attached to your github account
+  3. Go to the cloudflare pages [here](https://pages.cloudflare.com/) and go to the Workers & Pages page
+  4. Click Create Button -> Click the Pages subheading -> Import an existing Git repository -> Link your github account, and click the cloned repository of bolt.teacher you have made on your own github -> Begin setup -> Follow the following specifications:
+
+    Production branch: main
+    Framework preset: None
+    Build command: npm run build
+    Build output directory: /build/client
+
+    Environment variables (advanced) -> Add variable
+    Add any API keys that you are going to use here. The format should follow similar to the local.env file seen [here]()
+    For bolt.teacher, we recommend using Anthropic's Claude series, so you should have an ANTHROPIC_API_KEY
+
+    Click Save and Deploy
+
+    IMPORTANT: After deploying you are not done yet. 
+  5. Go to your deployment, click Build Settings, then go to the Project Settings. 
+  6. Scroll down to Variables and Secrets and add the ANTHROPIC_API_KEY (and any other API key's you want to use) here.
+  7. Go back to your deployment page and click Manage Deployment -> Retry Deployment
+
+When it is deployed next it should run bolt.teacher, with your API keys automatically connected.
+
+
+## Future Work
+
+
+## Limitations
+
+
+## 
+
+
+
 
 [![bolt.diy: AI-Powered Full-Stack Web Development in the Browser](./public/social_preview_index.jpg)](https://bolt.diy)
 
@@ -39,61 +126,6 @@ If you want to know what we are working on, what we are planning to work on, or 
 project, please check the [project management guide](./PROJECT.md) to get started easily.
 
 ## Requested Additions
-
-- ✅ OpenRouter Integration (@coleam00)
-- ✅ Gemini Integration (@jonathands)
-- ✅ Autogenerate Ollama models from what is downloaded (@yunatamos)
-- ✅ Filter models by provider (@jasonm23)
-- ✅ Download project as ZIP (@fabwaseem)
-- ✅ Improvements to the main bolt.new prompt in `app\lib\.server\llm\prompts.ts` (@kofi-bhr)
-- ✅ DeepSeek API Integration (@zenith110)
-- ✅ Mistral API Integration (@ArulGandhi)
-- ✅ "Open AI Like" API Integration (@ZerxZ)
-- ✅ Ability to sync files (one way sync) to local folder (@muzafferkadir)
-- ✅ Containerize the application with Docker for easy installation (@aaronbolton)
-- ✅ Publish projects directly to GitHub (@goncaloalves)
-- ✅ Ability to enter API keys in the UI (@ali00209)
-- ✅ xAI Grok Beta Integration (@milutinke)
-- ✅ LM Studio Integration (@karrot0)
-- ✅ HuggingFace Integration (@ahsan3219)
-- ✅ Bolt terminal to see the output of LLM run commands (@thecodacus)
-- ✅ Streaming of code output (@thecodacus)
-- ✅ Ability to revert code to earlier version (@wonderwhy-er)
-- ✅ Chat history backup and restore functionality (@sidbetatester)
-- ✅ Cohere Integration (@hasanraiyan)
-- ✅ Dynamic model max token length (@hasanraiyan)
-- ✅ Better prompt enhancing (@SujalXplores)
-- ✅ Prompt caching (@SujalXplores)
-- ✅ Load local projects into the app (@wonderwhy-er)
-- ✅ Together Integration (@mouimet-infinisoft)
-- ✅ Mobile friendly (@qwikode)
-- ✅ Better prompt enhancing (@SujalXplores)
-- ✅ Attach images to prompts (@atrokhym)(@stijnus)
-- ✅ Added Git Clone button (@thecodacus)
-- ✅ Git Import from url (@thecodacus)
-- ✅ PromptLibrary to have different variations of prompts for different use cases (@thecodacus)
-- ✅ Detect package.json and commands to auto install & run preview for folder and git import (@wonderwhy-er)
-- ✅ Selection tool to target changes visually (@emcconnell)
-- ✅ Detect terminal Errors and ask bolt to fix it (@thecodacus)
-- ✅ Detect preview Errors and ask bolt to fix it (@wonderwhy-er)
-- ✅ Add Starter Template Options (@thecodacus)
-- ✅ Perplexity Integration (@meetpateltech)
-- ✅ AWS Bedrock Integration (@kunjabijukchhe)
-- ✅ Add a "Diff View" to see the changes (@toddyclipsgg)
-- ⬜ **HIGH PRIORITY** - Prevent bolt from rewriting files as often (file locking and diffs)
-- ⬜ **HIGH PRIORITY** - Better prompting for smaller LLMs (code window sometimes doesn't start)
-- ⬜ **HIGH PRIORITY** - Run agents in the backend as opposed to a single model call
-- ✅ Deploy directly to Netlify (@xKevIsDev)
-- ✅ Supabase Integration (@xKevIsDev)
-- ⬜ Have LLM plan the project in a MD file for better results/transparency
-- ⬜ VSCode Integration with git-like confirmations
-- ⬜ Upload documents for knowledge - UI design templates, a code base to reference coding style, etc.
-- ✅ Voice prompting
-- ⬜ Azure Open AI API Integration
-- ⬜ Vertex AI Integration
-- ⬜ Granite Integration
-- ✅ Popout Window for Web Container(@stijnus)
-- ✅ Ability to change Popout window size (@stijnus)
 
 ## Features
 
