@@ -45,3 +45,26 @@
   fill: url(#shine-gradient);
   mix-blend-mode: overlay;
 }
+
+.cyborg-glow {
+  color: inherit;
+  text-shadow: none;
+}
+
+[data-theme='light'] .cyborg-glow,
+html[data-theme='light'] .cyborg-glow,
+body[data-theme='light'] .cyborg-glow {
+  text-shadow:
+    /* OUTLINE: 1px in all directions */
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000,
+    0 -1.5px 0 #000,
+    0 1.5px 0 #000,
+    -1.5px 0 0 #000,
+    1.5px 0 0 #000,
+    /* GLOW: larger, softer black glows */ 0 0 6px #000,
+    0 0 12px #000,
+    0 0 24px #000;
+}
