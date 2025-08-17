@@ -1,6 +1,7 @@
 # bolt.teacher
 
-<img width="1408" height="721" alt="boltteacher preview" src="https://github.com/user-attachments/assets/35f69858-a8ff-4c89-bbf6-38c8213d914d" />
+<img width="1408" height="721" alt="image" src="https://github.com/user-attachments/assets/61c93421-f4c3-460b-b25f-d49691005104" />
+
 
 Bolt.teacher is a modified version of [bolt.diy](https://github.com/stackblitz-labs/bolt.diy). 
 Bolt.teacher has been tuned specifically for teachers to create applications for their class or other educational reasons. Bolt creates an LTI 1.0 compliant applications, which can then could be shown on compatible Learning Management Services supporting LTI 1.0 such as Blackboard.
