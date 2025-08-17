@@ -364,7 +364,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                     Where ideas begin
                   </h1>
                   <p className="text-md lg:text-xl mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
-                    Bring ideas to life in seconds or get help on existing projects.
+                    Create projects useful for your class, students or teachers, in seconds
                   </p>
                 </div>
                 <div className="flex justify-center w-full">
