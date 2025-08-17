@@ -1,5 +1,9 @@
 # bolt.teacher
 
+<img width="1408" height="721" alt="boltteacher preview" src="https://github.com/user-attachments/assets/35f69858-a8ff-4c89-bbf6-38c8213d914d" />
+
+
+
 Bolt.teacher is a modified version of [bolt.diy](https://github.com/stackblitz-labs/bolt.diy). As bolt.teacher is largely the same, go to their for further documentation queries. Bolt.teacher has been tuned for teachers to use, so that they can generate LTI 1.0 compliant applications for their classes and be shown on popular Learning Management Services (LMS) such as Blackboard.
 
 Bolt.teacher is a research project for the University of Queensland, and has been made to test how Teachers will utilize the coming wave of generative AI to create new experiences or products that could be used to improve the quality of education. Teachers usually pool through online tools available, but now with generative AI, the possibilities of teacher creating resources for their classes opens up.
