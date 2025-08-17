@@ -49,9 +49,9 @@ export const TabTile: React.FC<TabTileProps> = ({
                   'relative flex flex-col items-center justify-center h-full p-4 rounded-lg',
                   'bg-white dark:bg-[#141414]',
                   'group cursor-pointer',
-                  'hover:bg-purple-50 dark:hover:bg-[#1a1a1a]',
+                  'hover:bg-[#e0fafa] dark:hover:bg-[#129e9d22]',
                   'transition-colors duration-100 ease-out',
-                  isActive ? 'bg-purple-500/5 dark:bg-purple-500/10' : '',
+                  isActive ? 'bg-[#15b6b405] dark:bg-[#15b6b433]' : '',
                   isLoading ? 'cursor-wait opacity-70 pointer-events-none' : '',
                 )}
               >
@@ -64,10 +64,10 @@ export const TabTile: React.FC<TabTileProps> = ({
                     'rounded-xl',
                     'bg-gray-100 dark:bg-gray-800',
                     'ring-1 ring-gray-200 dark:ring-gray-700',
-                    'group-hover:bg-purple-100 dark:group-hover:bg-gray-700/80',
-                    'group-hover:ring-purple-200 dark:group-hover:ring-purple-800/30',
+                    'group-hover:bg-[#e0fafa] dark:group-hover:bg-[#129e9d22]',
+                    'group-hover:ring-[#b3f0f0] dark:group-hover:ring-[#129e9d33]',
                     'transition-all duration-100 ease-out',
-                    isActive ? 'bg-purple-500/10 dark:bg-purple-500/10 ring-purple-500/30 dark:ring-purple-500/20' : '',
+                    isActive ? 'bg-[#15b6b405] dark:bg-[#15b6b433] ring-[#15b6b4] dark:ring-[#15b6b4]' : '',
                   )}
                 >
                   <div
@@ -75,9 +75,9 @@ export const TabTile: React.FC<TabTileProps> = ({
                       TAB_ICONS[tab.id],
                       'w-8 h-8',
                       'text-gray-600 dark:text-gray-300',
-                      'group-hover:text-purple-500 dark:group-hover:text-purple-400/80',
+                      'group-hover:text-[#15b6b4] dark:group-hover:text-[#15b6b4cc]',
                       'transition-colors duration-100 ease-out',
-                      isActive ? 'text-purple-500 dark:text-purple-400/90' : '',
+                      isActive ? 'text-[#15b6b4] dark:text-[#15b6b4]' : '',
                     )}
                   />
                 </div>

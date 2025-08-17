@@ -36,8 +36,8 @@ interface ControlPanelProps {
 const BETA_TABS = new Set<TabType>(['service-status', 'local-providers', 'mcp']);
 
 const BetaLabel = () => (
-  <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-purple-500/10 dark:bg-purple-500/20">
-    <span className="text-[10px] font-medium text-purple-600 dark:text-purple-400">BETA</span>
+  <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-[#15b6b420] dark:bg-[#15b6b433]">
+    <span className="text-[10px] font-medium text-[#15b6b4] dark:text-[#15b6b4]">BETA</span>
   </div>
 );
 

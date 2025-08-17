@@ -102,10 +102,10 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
             gradientUnits="userSpaceOnUse"
             gradientTransform="rotate(-45)"
           >
-            <stop offset="0%" stopColor="#b44aff" stopOpacity="0%"></stop>
-            <stop offset="40%" stopColor="#b44aff" stopOpacity="80%"></stop>
-            <stop offset="50%" stopColor="#b44aff" stopOpacity="80%"></stop>
-            <stop offset="100%" stopColor="#b44aff" stopOpacity="0%"></stop>
+            <stop offset="0%" stopColor="#15b6b4" stopOpacity="0%"></stop>
+            <stop offset="40%" stopColor="#15b6b4" stopOpacity="80%"></stop>
+            <stop offset="50%" stopColor="#15b6b4" stopOpacity="80%"></stop>
+            <stop offset="100%" stopColor="#15b6b4" stopOpacity="0%"></stop>
           </linearGradient>
           <linearGradient id="shine-gradient">
             <stop offset="0%" stopColor="white" stopOpacity="0%"></stop>
@@ -278,17 +278,27 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
             <IconButton title="Upload file" className="transition-all" onClick={() => props.handleFileUpload()}>
               <div className="i-ph:paperclip text-xl"></div>
             </IconButton>
+            <SpeechRecognitionButton
+              isListening={props.isListening}
+              onStart={props.startListening}
+              onStop={props.stopListening}
+              disabled={props.isStreaming}
+            />
             <IconButton
               title="Iterate prompt"
               disabled={props.input.length === 0 || props.iteratingPrompt}
-              className={classNames('transition-all', props.iteratingPrompt ? 'opacity-100' : '')}
+              className={classNames(
+                'transition-all',
+                props.iteratingPrompt ? 'opacity-100' : '',
+                'bg-[#e0fafa] hover:bg-[#b3f0f0] text-[#15b6b4]',
+              )}
               onClick={() => {
                 props.iteratePrompt?.();
                 toast.success('Prompt iterated!');
               }}
             >
               {props.iteratingPrompt ? (
-                <div className="i-svg-spinners:90-ring-with-bg text-bolt-elements-loader-progress text-xl animate-spin"></div>
+                <div className="i-svg-spinners:90-ring-with-bg text-[#15b6b4] text-xl animate-spin"></div>
               ) : (
                 <div className="i-ph:arrow-clockwise text-xl"></div>
               )}
@@ -296,42 +306,22 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
             <IconButton
               title="Enhance prompt"
               disabled={props.input.length === 0 || props.enhancingPrompt}
-              className={classNames('transition-all', props.enhancingPrompt ? 'opacity-100' : '')}
+              className={classNames(
+                'transition-all',
+                props.enhancingPrompt ? 'opacity-100' : '',
+                'bg-[#e0fafa] hover:bg-[#b3f0f0] text-[#15b6b4]',
+              )}
               onClick={() => {
                 props.enhancePrompt?.();
                 toast.success('Prompt enhanced!');
               }}
             >
               {props.enhancingPrompt ? (
-                <div className="i-svg-spinners:90-ring-with-bg text-bolt-elements-loader-progress text-xl animate-spin"></div>
+                <div className="i-svg-spinners:90-ring-with-bg text-[#15b6b4] text-xl animate-spin"></div>
               ) : (
                 <div className="i-bolt:stars text-xl"></div>
               )}
             </IconButton>
-
-            <SpeechRecognitionButton
-              isListening={props.isListening}
-              onStart={props.startListening}
-              onStop={props.stopListening}
-              disabled={props.isStreaming}
-            />
-            {props.chatStarted && (
-              <IconButton
-                title="Discuss"
-                className={classNames(
-                  'transition-all flex items-center gap-1 px-1.5',
-                  props.chatMode === 'discuss'
-                    ? '!bg-bolt-elements-item-backgroundAccent !text-bolt-elements-item-contentAccent'
-                    : 'bg-bolt-elements-item-backgroundDefault text-bolt-elements-item-contentDefault',
-                )}
-                onClick={() => {
-                  props.setChatMode?.(props.chatMode === 'discuss' ? 'build' : 'discuss');
-                }}
-              >
-                <div className={`i-ph:chats text-xl`} />
-                {props.chatMode === 'discuss' ? <span>Discuss</span> : <span />}
-              </IconButton>
-            )}
           </div>
           {props.input.length > 3 ? (
             <div className="text-xs text-bolt-elements-textTertiary">
