@@ -51,10 +51,15 @@ While it isn't requried, it is recommended to run bolt.teacher applications in a
        ```bash
        pnpm install
        ```
+  4.1 (Optional).  Add API keys
+      Modify the .env.example file to .env.local & add the API keys 
+      It's recommended to have an ANTHROPIC_API_KEY for the best results
+      
   5.   Start the application
        ```bash
        pnpm run dev
        ```
+
        
 Can also be installed using docker which should be the same as what is shown [here](https://github.com/stackblitz-labs/bolt.diy?tab=readme-ov-file#option-2-using-docker). We recommend using Anthropic's Claude series for the best results.
 
@@ -90,21 +95,7 @@ When it is deployed next it should run bolt.teacher, with your API keys automati
   - Complicated projects may need multiple prompts from the user to refine what bolt creates, and may not be possible with current AI capabilities
 
 ## Testing Created Projects 
-[put annesha's code here aswell as my router.py thing] 
-
-
-## Change in Prompts for bolt.teacher compared to bolt.diy
-
-### Master prompt 
-
-### Enhancer button prompt
-
-### Iterator button prompt
-
-
-
-
-
+If you want to see for yourself that the projects made by bolt are LIT 1.0 compliant and would run on an LMS, go to [this repo here](https://github.com/nuciforan0/bolt.teacher-app-executor) for instructions on how to run it locally yourself through an LMS simulator.
 
 
 # Licensing
