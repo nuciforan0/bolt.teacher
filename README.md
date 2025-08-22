@@ -65,6 +65,7 @@ Can also be installed using docker which should be the same as what is shown [he
 
 ## Deployment
   There are other ways to deploy but this is what I chose to do for bolt.teache
+  
   0. (Optional) Get API keys that you want your deployment to use, the permitted api keys and their formatted names can be seen in the [.env.example file](https://github.com/nuciforan0/bolt.teacher/blob/main/.env.example)
   1. Create a cloudflare account [here](https://pages.cloudflare.com/) and a github account [here](https://github.com/) 
   2. Create a new repository of bolt.teacher which is attached to your github account
