@@ -64,7 +64,7 @@ While it isn't requried, it is recommended to run bolt.teacher applications in a
 Can also be installed using docker which should be the same as what is shown [here](https://github.com/stackblitz-labs/bolt.diy?tab=readme-ov-file#option-2-using-docker). We recommend using Anthropic's Claude series for the best results.
 
 ## Deployment
-  There are other ways to deploy but this is what I chose to do for bolt.teache
+  There are other ways to deploy but this is what I chose to do for bolt.teacher
   
   0. (Optional) Get API keys that you want your deployment to use, the permitted api keys and their formatted names can be seen in the [.env.example file](https://github.com/nuciforan0/bolt.teacher/blob/main/.env.example)
   1. Create a cloudflare account [here](https://pages.cloudflare.com/) and a github account [here](https://github.com/) 
